@@ -7,12 +7,12 @@ import os
 import torchaudio
 import torchaudio.transforms as T
 
-# 1. ARQUITETURA DO MODELO (Inalterada)
+# ARQUITETURA DO MODELO 
 # Esta classe deve ser idêntica à do script de treinamento
 class FineTunedResNet(nn.Module):
     def __init__(self, num_classes):
         super(FineTunedResNet, self).__init__()
-        # Carrega o modelo com os pesos pré-treinados (CRÍTICO)
+        # Carrega o modelo com os pesos pré-treinados 
         self.resnet = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
         
         # Congela/Descongela as mesmas camadas do treino
@@ -31,19 +31,19 @@ class FineTunedResNet(nn.Module):
         return self.resnet(x)
 
 
-# 2. FUNÇÃO DE PREVISÃO (Atualizada com Torchaudio)
+# FUNÇÃO DE PREVISÃO 
 def classificar_audio(caminho_do_audio, modelo, classes, device):
     
     SR_PADRAO = 22050
     
     try:
-        # 1. Carregar com Torchaudio
+        # Carregar com Torchaudio
         # waveform: Tensor de áudio
         # sr: Sample rate original
         waveform, sr = torchaudio.load(caminho_do_audio)
         waveform = waveform.to(device) # Move o áudio para a GPU (se disponível)
         
-        # 2. Resample (se necessário) - Torchaudio faz isso fácil
+        # Resample (se necessário) - Torchaudio faz isso fácil
         if sr != SR_PADRAO:
             resampler = T.Resample(orig_freq=sr, new_freq=SR_PADRAO).to(device)
             waveform = resampler(waveform)
@@ -52,7 +52,7 @@ def classificar_audio(caminho_do_audio, modelo, classes, device):
         if waveform.shape[0] > 1:
             waveform = torch.mean(waveform, dim=0, keepdim=True)
             
-        # 3. Criar o Melspectrogram direto para o tensor
+        # Criar o Melspectrogram direto para o tensor
         mel_spectrogram_transform = T.MelSpectrogram(
             sample_rate=SR_PADRAO,
             n_mels=128 # Deve ser o mesmo n_mels usado no treino
@@ -60,21 +60,19 @@ def classificar_audio(caminho_do_audio, modelo, classes, device):
         
         mel_spec = mel_spectrogram_transform(waveform)
         
-        # 4. Converter para dB
+        # Converter para dB
         # T.AmplitudeToDB() converte para decibéis
         mel_spec_db = T.AmplitudeToDB()(mel_spec)
 
-        # 5. Normalizar o espectrograma para 0-1 (para PIL) e converter
+        # Normalizar o espectrograma para 0-1 (para PIL) e converter
         #    (Isso é necessário para "simular" uma imagem antes das transforms)
         mel_spec_db_normalized = (mel_spec_db - mel_spec_db.min()) / (mel_spec_db.max() - mel_spec_db.min())
         
         # Converte para PIL Image (precisa ir para CPU e ter 3 canais)
         # .expand(3, -1, -1) repete o tensor 3x no lugar de Grayscale(3)
         imagem_pil = transforms.ToPILImage()(mel_spec_db_normalized.cpu().expand(3, -1, -1))
-
-        # --------------------------------------------------------------------
-        # 6. Pré-processamento (Início do pipeline de Visão Computacional)
-        # --------------------------------------------------------------------
+        
+        # Pré-processamento (Início do pipeline de Visão Computacional)
         IMG_SIZE = 224 
         transform = transforms.Compose([
             transforms.Resize((IMG_SIZE, IMG_SIZE)),      
@@ -88,7 +86,6 @@ def classificar_audio(caminho_do_audio, modelo, classes, device):
         
         imagem_tensor = transform(imagem_pil).unsqueeze(0).to(device) 
 
-        # 7. Inferência
         modelo.eval() 
         with torch.no_grad():
             output = modelo(imagem_tensor)
@@ -107,7 +104,7 @@ def classificar_audio(caminho_do_audio, modelo, classes, device):
         return f"Ocorreu um erro ao processar o áudio (Dispositivo: {device}): {e}", 0
 
 
-# 3. EXECUÇÃO PRINCIPAL (Inalterada)
+# EXECUÇÃO PRINCIPAL (Inalterada)
 if __name__ == '__main__':
     
     MODELO_PATH = r'C:\Users\arthur.almeida\Downloads\resnet50_instrumentos.pth' 

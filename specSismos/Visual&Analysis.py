@@ -8,7 +8,6 @@ from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
 import random
 
-# 👇 CAMINHO CORRIGIDO
 ARQUIVO_H5 = r'C:\Users\arthur.almeida\Downloads\dados_sismicos.h5'
 
 PASTA_SAIDA = './dataset_sismos_final'

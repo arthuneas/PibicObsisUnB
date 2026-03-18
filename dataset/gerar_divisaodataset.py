@@ -16,7 +16,7 @@ PASTA_DESTINO = './dataset_final'
 PROPORCAO_TREINO = 0.7  # 70% para treino
 PROPORCAO_VALIDACAO = 0.15 # 15% para validação
 PROPORCAO_TESTE = 0.15   # 15% para teste
-# --- FIM DA CONFIGURAÇÃO ---
+
 
 def dividir_arquivos(nome_classe):
     print(f"\nProcessando classe: {nome_classe}")

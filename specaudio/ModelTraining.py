@@ -10,7 +10,7 @@ from torch.optim.lr_scheduler import StepLR
 from tqdm import tqdm
 
 
-# 1. CONFIGURAÇÕES E PRÉ-PROCESSAMENTO
+# CONFIGURAÇÕES E PRÉ-PROCESSAMENTO
 # Define os hiperparâmetros e configurações do processamento.
 IMG_SIZE = 224
 BATCH_SIZE = 32
@@ -41,7 +41,7 @@ transform_teste = transforms.Compose([
 ])
 
 
-# 2. ARQUITETURA DO MODELO
+# ARQUITETURA DO MODELO
 # Define a classe do modelo de classificação baseado na ResNet.
 class FineTunedResNet(nn.Module):
     def __init__(self, num_classes):
@@ -72,7 +72,7 @@ class FineTunedResNet(nn.Module):
         return self.resnet(x)
 
 
-# 3. BLOCO DE EXECUÇÃO PRINCIPAL
+# BLOCO DE EXECUÇÃO PRINCIPAL
 # Garante que o código de treinamento só seja executado quando o script for chamado diretamente.
 if __name__ == '__main__':
     
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     print(f"Classes detectadas ({num_classes}): {train_dataset.classes}")
     print(f"Dispositivo de treinamento: {device}")
 
-    # 4. INICIALIZAÇÃO E TREINAMENTO
+    # INICIALIZAÇÃO E TREINAMENTO
     
     # Instancia o modelo e move para o dispositivo (GPU/CPU)
     model = FineTunedResNet(num_classes=num_classes).to(device)

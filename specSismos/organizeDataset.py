@@ -13,9 +13,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.utils import class_weight
 import random
 
-# ==========================================
-# 1. CONFIGURAÇÕES
-# ==========================================
+#  CONFIGURAÇÕES
 DATA_PATH = "./dataset_OrganizedSismicos_final"
 MODEL_SAVE_PATH = './model_checkpoint/resnet50_sismico_pro.pth'
 
@@ -43,9 +41,7 @@ def set_seed(seed):
 set_seed(SEED)
 print(f"🔧 Dispositivo: {DEVICE}")
 
-# ==========================================
-# 2. CARREGAMENTO DE DADOS
-# ==========================================
+# CARREGAMENTO DE DADOS
 stats = ((0.5,), (0.5,))
 
 # Augmentation "Leve" (Online) - Já fizemos o pesado no disco
@@ -89,9 +85,7 @@ class_names = train_dataset.classes
 print(f"Classes: {class_names}")
 print(f"Imagens: Treino={len(train_dataset)} | Val={len(val_dataset)} | Teste={len(test_dataset)}")
 
-# ==========================================
 # 3. MODELO
-# ==========================================
 class SeismicResNet(nn.Module):
     def __init__(self, num_classes):
         super(SeismicResNet, self).__init__()
@@ -120,9 +114,7 @@ class SeismicResNet(nn.Module):
     def forward(self, x):
         return self.resnet(x)
 
-# ==========================================
 # 4. TREINAMENTO
-# ==========================================
 def treinar():
     os.makedirs(os.path.dirname(MODEL_SAVE_PATH), exist_ok=True)
     
@@ -222,9 +214,7 @@ def treinar():
             
     return model, history
 
-# ==========================================
 # 5. AVALIAÇÃO
-# ==========================================
 def avaliar_teste(model):
     print("\n🔍 Avaliando no conjunto de TESTE (Prova Real)...")
     

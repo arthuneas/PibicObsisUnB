@@ -90,7 +90,7 @@ def processar_tarefa(args):
     except Exception as e:
         print(f"Erro processando {caminho_final}: {e}")
 
-# 3. EXECUÇÃO COM SPLIT SEGURO
+# EXECUÇÃO COM SPLIT SEGURO
 if __name__ == '__main__':
     print(f"--- INICIANDO ---")
     print(f"Meta Treino: {META_TREINO_POR_CLASSE} | Validação: {SPLIT_VALIDACAO*100}% dos reais")

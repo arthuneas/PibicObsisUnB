@@ -12,7 +12,7 @@ from PIL import Image
 
 
 print("--- Fábrica de Espectrogramas ---")
-# 1. CONFIGURAÇÃO GERAL 
+# CONFIGURAÇÃO GERAL 
 
 # Configuração da Fonte de Áudio
 QUANTIDADE_DE_FRASES = 1000 # Quantas frases do livro queremos usar para gerar áudio
@@ -37,10 +37,8 @@ N_MELS_OPTIONS = [64, 128, 256]
 PASTA_DE_AUDIOS = './audios_gerados_massivos'
 PASTA_DE_SAIDA_ESPECTROGRAMAS = './espectrogramas_gerados_diversos'
 
-# --- FIM DA CONFIGURAÇÃO ---
 
-
-# 2. FUNÇÕES AUXILIARES 
+# FUNÇÕES AUXILIARES 
 
 def baixar_livro(url, caminho_salvar):
     """Baixa o arquivo de texto do livro se ele não existir."""
@@ -79,7 +77,7 @@ def gerar_arquivos_de_audio(lista_de_frases, pasta_saida):
         except Exception as e:
             print(f"Erro ao gerar áudio '{texto[:30]}...': {e}") # Mostra um pedaço do texto em caso de erro
 
-# 3. FUNÇÃO PRINCIPAL DE GERAÇÃO DE ESPECTROGRAMAS
+# FUNÇÃO PRINCIPAL DE GERAÇÃO DE ESPECTROGRAMAS
 
 def gerar_espectrograma_de_audio(caminho_audio, caminho_saida, estilo_config):
     """
@@ -146,7 +144,7 @@ def gerar_espectrograma_de_audio(caminho_audio, caminho_saida, estilo_config):
         print(f"Erro ao processar espectrograma para {os.path.basename(caminho_audio)}: {e}")
 
 
-# 4. EXECUÇÃO PRINCIPAL 
+# EXECUÇÃO PRINCIPAL 
 
 if __name__ == '__main__':
     if baixar_livro(URL_LIVRO, CAMINHO_LIVRO_TXT):

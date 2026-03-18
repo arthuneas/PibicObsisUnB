@@ -13,17 +13,15 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix, classification_report
 import random
 
-# ==========================================
-# 1. CONFIGURAÇÕES (COLAB)
-# ==========================================
+#  CONFIGURAÇÕES
 # Verifica se o dataset rápido existe
 if os.path.exists('/content/dataset_sismico_temp'):
     DATA_PATH = '/content/dataset_sismico_temp'
-    print("✅ Dataset encontrado na memória do Colab (Rápido)!")
+    print("Dataset encontrado na memória do Colab!")
 else:
     # Se você fez upload manual ou montou drive
     DATA_PATH = "./dataset_OrganizedSismicos_final"
-    print("⚠️ Dataset local ou não encontrado na memória temporária.")
+    print("Dataset local ou não encontrado na memória temporária.")
 
 # Salva no Drive
 MODEL_SAVE_PATH = '/content/drive/MyDrive/PibicOasis/efficientnet_b0_focal.pth'
@@ -55,11 +53,9 @@ def set_seed(seed):
 set_seed(SEED)
 print(f"🔧 Dispositivo: {DEVICE}")
 
-# ==========================================
-# 2. CARREGAMENTO DE DADOS
-# ==========================================
+# CARREGAMENTO DE DADOS
 if not os.path.exists(DATA_PATH) or not os.path.exists(os.path.join(DATA_PATH, 'train')):
-    raise FileNotFoundError("❌ Dataset não encontrado! Rode o script GERADOR primeiro.")
+    raise FileNotFoundError("Dataset não encontrado! Rode o script GERADOR primeiro.")
 
 stats = ((0.5,), (0.5,))
 
@@ -81,7 +77,7 @@ transform_val = transforms.Compose([
     transforms.Normalize(*stats)
 ])
 
-print("\n📂 Carregando Loaders...")
+print("\n Carregando Loaders")
 train_dataset = datasets.ImageFolder(os.path.join(DATA_PATH, 'train'), transform=transform_train)
 val_dataset = datasets.ImageFolder(os.path.join(DATA_PATH, 'validation'), transform=transform_val)
 test_dataset = datasets.ImageFolder(os.path.join(DATA_PATH, 'test'), transform=transform_val)
@@ -93,9 +89,7 @@ test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num
 class_names = train_dataset.classes
 print(f"Classes: {class_names}")
 
-# ==========================================
-# 3. FOCAL LOSS
-# ==========================================
+# FOCAL LOSS
 class FocalLoss(nn.Module):
     def __init__(self, alpha=1, gamma=2, reduction='mean'):
         super(FocalLoss, self).__init__()
@@ -109,9 +103,7 @@ class FocalLoss(nn.Module):
         F_loss = self.alpha * (1-pt)**self.gamma * CE_loss
         return torch.mean(F_loss) if self.reduction == 'mean' else F_loss
 
-# ==========================================
-# 4. MODELO: EFFICIENTNET-B0
-# ==========================================
+# MODELO: EFFICIENTNET-B0
 class SeismicEfficientNet(nn.Module):
     def __init__(self, num_classes):
         super(SeismicEfficientNet, self).__init__()
@@ -138,9 +130,8 @@ class SeismicEfficientNet(nn.Module):
     def forward(self, x):
         return self.effnet(x)
 
-# ==========================================
-# 5. TREINAMENTO
-# ==========================================
+
+# TREINAMENTO
 def treinar():
     os.makedirs(os.path.dirname(MODEL_SAVE_PATH), exist_ok=True)
     
@@ -157,7 +148,7 @@ def treinar():
     patience_counter = 0
     history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
 
-    print("\n🚀 INICIANDO TREINAMENTO (EFFICIENTNET)...")
+    print("\n INICIANDO TREINAMENTO (EFFICIENTNET)...")
 
     for epoch in range(NUM_EPOCHS):
         # --- TREINO ---
@@ -214,25 +205,23 @@ def treinar():
             best_val_acc = epoch_val_acc
             patience_counter = 0
             torch.save(model.state_dict(), MODEL_SAVE_PATH)
-            print(f"   💾 Melhor modelo salvo! (Acc: {best_val_acc:.2f}%)")
+            print(f"   Melhor modelo salvo! (Acc: {best_val_acc:.2f}%)")
         else:
             patience_counter += 1
-            print(f"   ⚠️ Sem melhora ({patience_counter}/{PATIENCE})")
+            print(f"   Sem melhora ({patience_counter}/{PATIENCE})")
             
         if patience_counter >= PATIENCE:
-            print("🛑 Early Stopping!")
+            print("Early Stopping!")
             break
 
     return model, history
 
-# ==========================================
-# 6. AVALIAÇÃO
-# ==========================================
+
 def avaliar_teste(model):
-    print("\n🔍 Avaliando Teste (EfficientNet)...")
+    print("\nAvaliando Teste")
     if os.path.exists(MODEL_SAVE_PATH):
         model.load_state_dict(torch.load(MODEL_SAVE_PATH))
-        print("   ✅ Checkpoint carregado.")
+        print("   Checkpoint carregado.")
     
     model.eval()
     all_preds, all_labels = [], []

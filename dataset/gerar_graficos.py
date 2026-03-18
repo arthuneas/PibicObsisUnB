@@ -6,7 +6,6 @@ import random
 # --- CONFIGURAÇÃO ---
 OUTPUT_PLOTS_FOLDER = './dataset/diversos_plots/plots'
 NUM_PLOTS_TO_GENERATE = 5000 # Gere quantos gráficos quiser
-# --- FIM DA CONFIGURAÇÃO ---
 
 # Cria o diretório de saída se ele não existir
 if not os.path.exists(OUTPUT_PLOTS_FOLDER):

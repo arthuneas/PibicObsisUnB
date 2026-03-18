@@ -17,9 +17,7 @@ META_TREINO_POR_CLASSE = 5000 # Meta apenas para o TREINO
 SPLIT_VALIDACAO = 0.20        # 20% dos dados reais vão para validação (intocados)
 IMG_SIZE = (224, 224)
 
-# ==========================================
-# 1. DATA AUGMENTATION (Igual ao anterior)
-# ==========================================
+# DATA AUGMENTATION (Igual ao anterior)
 def gerar_variacao(sinal_in):
     sinal_mod = sinal_in.copy()
     if len(sinal_mod) < 200: return sinal_mod
@@ -55,13 +53,10 @@ def gerar_variacao(sinal_in):
 
     return sinal_mod.astype(np.float32)
 
-# ==========================================
-# 2. WORKER COM DETREND + NORMALIZAÇÃO
-# ==========================================
+# WORKER COM DETREND + NORMALIZAÇÃO
 def processar_tarefa(args):
     sinal_base, sr, caminho_final, aplicar_efeito = args
     
-    # --- MELHORIA 1: DETREND ---
     # Remove viés DC ou tendências lineares do sensor antes de qualquer coisa
     sinal_base = signal.detrend(sinal_base)
     
@@ -95,9 +90,7 @@ def processar_tarefa(args):
     except Exception as e:
         print(f"Erro processando {caminho_final}: {e}")
 
-# ==========================================
 # 3. EXECUÇÃO COM SPLIT SEGURO
-# ==========================================
 if __name__ == '__main__':
     print(f"--- INICIANDO ---")
     print(f"Meta Treino: {META_TREINO_POR_CLASSE} | Validação: {SPLIT_VALIDACAO*100}% dos reais")
@@ -127,13 +120,12 @@ if __name__ == '__main__':
         total_originais = len(indices_originais)
         qtd_val = int(total_originais * SPLIT_VALIDACAO)
         
-        # --- O GRANDE SEGREDO: SPLIT ANTES ---
         # Índices reservados EXCLUSIVAMENTE para validação (nunca serão aumentados)
         idxs_val = indices_originais[:qtd_val]
         # Índices reservados para treino (serão aumentados para atingir a meta)
         idxs_train_seed = indices_originais[qtd_val:]
         
-        # 1. Preparar Validação (Apenas salva, sem augmentation)
+        # Preparar Validação (Apenas salva, sem augmentation)
         dir_classe_val = os.path.join(dir_val_root, nome_classe)
         os.makedirs(dir_classe_val, exist_ok=True)
         
@@ -141,7 +133,7 @@ if __name__ == '__main__':
             caminho = os.path.join(dir_classe_val, f"{nome_classe}_val_{i}.png")
             tarefas.append((X[idx], SAMPLE_RATE, caminho, False)) # False = Sem efeito
             
-        # 2. Preparar Treino (Expande até a meta)
+        # Preparar Treino (Expande até a meta)
         dir_classe_train = os.path.join(dir_train_root, nome_classe)
         os.makedirs(dir_classe_train, exist_ok=True)
         

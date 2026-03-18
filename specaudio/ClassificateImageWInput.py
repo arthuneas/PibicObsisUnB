@@ -10,7 +10,7 @@ import io
 import matplotlib.pyplot as plt
 import librosa.display
 
-# 1. ARQUITETURA DO MODELO ()
+# ARQUITETURA DO MODELO
 class FineTunedResNet(nn.Module):
     def __init__(self, num_classes):
         super(FineTunedResNet, self).__init__()
@@ -30,7 +30,7 @@ class FineTunedResNet(nn.Module):
         return self.resnet(x)
 
 
-# 2. FUNÇÃO DE PREVISÃO 
+# FUNÇÃO DE PREVISÃO 
 def classificar_audio(caminho_do_audio, modelo, classes, device):
     
     SR_PADRAO = 22050
@@ -59,7 +59,7 @@ def classificar_audio(caminho_do_audio, modelo, classes, device):
         imagem_pil = Image.open(buf).convert('RGB')
         buf.close() 
 
-        # 2. Pré-processamento 
+        # Pré-processamento 
         IMG_SIZE = 224 
         transform = transforms.Compose([
             transforms.Resize((IMG_SIZE, IMG_SIZE)),           
@@ -72,7 +72,7 @@ def classificar_audio(caminho_do_audio, modelo, classes, device):
         
         imagem_tensor = transform(imagem_pil).unsqueeze(0).to(device) 
 
-        # 3. Inferência
+        # Inferência
         modelo.eval() 
         with torch.no_grad():
             output = modelo(imagem_tensor)
@@ -90,7 +90,7 @@ def classificar_audio(caminho_do_audio, modelo, classes, device):
         return f"Ocorreu um erro ao processar o áudio: {e}", 0
 
 
-# 3. EXECUÇÃO PRINCIPAL 
+# EXECUÇÃO PRINCIPAL 
 if __name__ == '__main__':
     
     MODELO_PATH = r'C:\Users\arthur.almeida\Downloads\resnet50_instrumentos.pth' 

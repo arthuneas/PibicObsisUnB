@@ -13,7 +13,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.utils import class_weight
 import random
 
-#  CONFIGURAÇÕES
+# CONFIGURAÇÕES
 DATA_PATH = "./dataset_OrganizedSismicos_final"
 MODEL_SAVE_PATH = './model_checkpoint/resnet50_sismico_pro.pth'
 
@@ -39,7 +39,7 @@ def set_seed(seed):
         torch.backends.cudnn.benchmark = True
 
 set_seed(SEED)
-print(f"🔧 Dispositivo: {DEVICE}")
+print(f" Dispositivo: {DEVICE}")
 
 # CARREGAMENTO DE DADOS
 stats = ((0.5,), (0.5,))
@@ -62,7 +62,7 @@ transform_val = transforms.Compose([
     transforms.Normalize(*stats)
 ])
 
-print("\n📂 Carregando Datasets...")
+print("\n Carregando Datasets...")
 
 # Verifica pastas
 for split in ['train', 'validation', 'test']:
@@ -135,7 +135,7 @@ def treinar():
     patience_counter = 0
     history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
 
-    print("\n🚀 INICIANDO TREINAMENTO...")
+    print("\n INICIANDO TREINAMENTO...")
 
     for epoch in range(NUM_EPOCHS):
         # --- TREINO ---
@@ -203,13 +203,13 @@ def treinar():
             best_val_loss = epoch_val_loss
             patience_counter = 0
             torch.save(model.state_dict(), MODEL_SAVE_PATH)
-            print("   💾 Melhor modelo salvo!")
+            print("    Melhor modelo salvo!")
         else:
             patience_counter += 1
-            print(f"   ⚠️ Sem melhoria ({patience_counter}/{PATIENCE})")
+            print(f"    Sem melhoria ({patience_counter}/{PATIENCE})")
             
         if patience_counter >= PATIENCE:
-            print("\n🛑 Early Stopping ativado!")
+            print("\n Early Stopping ativado!")
             break
             
     return model, history
@@ -221,9 +221,9 @@ def avaliar_teste(model):
     # Carrega melhor modelo
     try:
         model.load_state_dict(torch.load(MODEL_SAVE_PATH))
-        print("   ✅ Modelo carregado.")
+        print("    Modelo carregado.")
     except:
-        print("   ❌ Erro ao carregar modelo. Usando o atual.")
+        print("    Erro ao carregar modelo. Usando o atual.")
 
     model.eval()
     all_preds = []
